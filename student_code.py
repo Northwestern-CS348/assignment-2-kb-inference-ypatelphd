@@ -129,7 +129,7 @@ class KnowledgeBase(object):
         printv("Retracting {!r}", 0, verbose, [fact_or_rule])
         ####################################################
         # Student code goes here
-        print("retracting {!r}".format([fact_or_rule]))
+
         if isinstance(fact_or_rule, Fact):
             # First check to see if this fact exists and is unsupported. If it is, proceed with removal
             if fact_or_rule in self.facts:
@@ -137,29 +137,17 @@ class KnowledgeBase(object):
                 ind = self.facts.index(fact_or_rule)
 
                 the_fact_or_rule = self.facts[ind]
-                print("working with...")
-                print(the_fact_or_rule)
-#                print(len(the_fact_or_rule.supported_by))
 
                 if len(the_fact_or_rule.supported_by) > 0:
                     the_fact_or_rule.asserted = False
                 else:
-#                    print("it's found! at index...")
-#                    print(ind)
-#                    print("supports facts count..")
-#                    print(len(the_fact_or_rule.supports_facts))
-
                     # Remove everything that this fact supports IF it was supported only by this fact
                     for f in the_fact_or_rule.supports_facts:
                         f_ind = self.facts.index(f)
-                        print(self.facts[f_ind])
-#                        print("working with supported fact indx")
-#                        print(f_ind)
-#                        print(f)
-#                        print(len(f.supported_by))
+
                         if len(self.facts[f_ind].supported_by) == 1:
                             self.facts[f_ind].supported_by.pop()
-##                            the_fact_or_rule.supports_facts.pop(f_ind)
+
                             if not self.facts[f_ind].asserted:
                                 self.kb_retract(self.facts[f_ind])
                         elif len(self.facts[f_ind].supported_by) > 1:
@@ -167,26 +155,17 @@ class KnowledgeBase(object):
                             # However, we need to update the supported by list to remove this fact
                             for i in self.facts[f_ind].supported_by:
                                 i_ind = self.facts[f_ind].supported_by.index(i)
-                                print("checking index")
-                                print(i_ind)
-                                print(i)
+
                                 if (i[0] == the_fact_or_rule) or (i[1] == the_fact_or_rule):
                                     self.facts[f_ind].supported_by.pop(i_ind)
-##                            the_fact_or_rule.supports_facts.pop(f_ind)
 
-#                    print("supports rules count..")
-#                    print(len(the_fact_or_rule.supports_rules))
                     for r in the_fact_or_rule.supports_rules:
                         r_ind = self.rules.index(r)
-#                        print("working with supported rule indx")
-#                        print(r_ind)
-#                        print(r)
-#                        print(len(r.supported_by))
+
                         if len(self.rules[r_ind].supported_by) == 1:
                             self.rules[r_ind].supported_by.pop()
-##                            the_fact_or_rule.supports_rules.pop(r_ind)
+
                             if not self.rules[r_ind].asserted:
-#                                print(r)
                                 self.kb_retract(self.rules[r_ind])
                         elif len(self.rules[r_ind].supported_by) > 1:
                             # The rule I support is also supported by other things, so it can't be removed
@@ -195,15 +174,8 @@ class KnowledgeBase(object):
                                 i_ind = self.rules[r_ind].supported_by.index(i)
                                 if (i[0] == the_fact_or_rule) or (i[1] == the_fact_or_rule):
                                     self.rules[r_ind].supported_by.pop(i_ind)
-##                            the_fact_or_rule.supports_rules.pop(r_ind)
 
-                    # After clearing all dependent facts and rules, remove this rule
-#                    print("popping...")
-#                    print(self.facts[ind])
-#                    # Refresh index in case recursive pops moved things around
-#                    ind = self.facts.index(fact_or_rule)
                     self.facts.pop(ind)
-
 
         if isinstance(fact_or_rule, Rule):
             # First check to see if this rule exists
@@ -213,30 +185,18 @@ class KnowledgeBase(object):
 
                 the_fact_or_rule = self.rules[ind]
 
-                print("retracting rule...")
-                print(the_fact_or_rule)
-
                 # If the rule is asserted, we never retract, so only proceed if it's not asserted
                 if not the_fact_or_rule.asserted:
                     # Check to see if the rule has lost support. Only proceed if so
-#                    print("im here with")
-#                    print(the_fact_or_rule)
                     if len(the_fact_or_rule.supported_by) == 0:
 
                         # Remove everything that this rule supports IF it was supported only by this rule
                         for f in the_fact_or_rule.supports_facts:
                             f_ind = self.facts.index(f)
 
-                            print("working on a supported fact..")
-                            print(f)
-                            print(self.facts[f_ind])
                             if len(self.facts[f_ind].supported_by) == 1:
                                 self.facts[f_ind].supported_by.pop()
-#                                if self.facts[f_ind].supported_by:
-#                                    self.facts[f_ind].supported_by.pop()
-                                print("JUST POPPED! now my count is...")
-                                print(len(self.facts[f_ind].supported_by))
-##                                the_fact_or_rule.supports_facts.pop(f_ind)
+
                                 if not self.facts[f_ind].asserted:
                                     self.kb_retract(self.facts[f_ind])
                             elif len(self.facts[f_ind].supported_by) > 1:
@@ -246,17 +206,13 @@ class KnowledgeBase(object):
                                     i_ind = self.facts[f_ind].supported_by.index(i)
                                     if (i[0] == the_fact_or_rule) or (i[1] == the_fact_or_rule):
                                         self.facts[f_ind].supported_by.pop(i_ind)
-#                                        if self.facts[f_ind].supported_by:
-#                                            self.facts[f_ind].supported_by.pop(i_ind)
-                                print("all popped. now supported by count is...")
-                                print(len(self.facts[f_ind].supported_by))
-##                                the_fact_or_rule.supports_facts.pop(f_ind)
+
                         for r in the_fact_or_rule.supports_rules:
                             r_ind = the_fact_or_rule.supports_rules.index(r)
 
                             if len(self.rules[r_ind].supported_by) == 1:
                                 self.rules[r_ind].supported_by.pop()
-##                                the_fact_or_rule.supports_rules.pop(r_ind)
+
                                 if not self.rules[r_ind].asserted:
                                     self.kb_retract(self.rules[r_ind])
                             elif len(self.rules[r_ind].supported_by) > 1:
@@ -266,14 +222,9 @@ class KnowledgeBase(object):
                                     i_ind = self.rules[r_ind].supported_by.index(i)
                                     if (i[0] == the_fact_or_rule) or (i[1] == the_fact_or_rule):
                                         self.rules[r_ind].supported_by.pop(i_ind)
-##                                the_fact_or_rule.supports_rules.pop(r_ind)
 
                         # After clearing all dependent facts and rules, remove this rule
-#                        #Refresh index in case recursive pops moved things around
-#                        ind = self.rules.index(fact_or_rule)
                         self.rules.pop(ind)
-
-
 
 
 class InferenceEngine(object):
@@ -295,7 +246,7 @@ class InferenceEngine(object):
 
         # First check to see if there is a matching set of bindings
         bindings = match(fact.statement, rule.lhs[0])
-#        print(bindings)
+
         # If some bindings were returned, process
         if bindings:
             # The rule could have multiple statements. If it has just one, and we have a match,
@@ -303,8 +254,6 @@ class InferenceEngine(object):
             if len(rule.lhs) == 1:
                 # Instantiate the rule with the binding and insert into KB
                 inferred_fact = lc.Fact(instantiate(rule.rhs, bindings), [[fact, rule]])
-#                print("inferred_fact")
-#                print(inferred_fact)
                 kb.kb_assert(inferred_fact)
                 fact.supports_facts.append(inferred_fact)
                 rule.supports_facts.append(inferred_fact)
